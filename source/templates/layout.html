@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask auth</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+       
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            }
+
+        .navbar{
+            background-color: #000;
+            display: flex;
+            max-height: 40px;
+        }
+        .nav-links{
+            display: flex;
+            gap:30px;
+        }
+        .nav-links li{
+            list-style-type: none;
+        }
+        .nav-links li a{
+            color: #fff;
+            text-decoration: none;
+        }
+        .nav-links li a:hover{
+            color: rgb(245, 245, 109);
+        }
+        body{
+            height: 100vh;
+            background-color: rgb(241, 238, 238);
+        }
+        .hero{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 80vh;
+        }
+        .hero .main{
+            height: 40%;
+        }
+        .wrapper{
+            background-color: #fff;
+            border-radius: 10px;
+            border: 2px solid black;
+            box-shadow:4px 3px 5px #534f4f;
+            padding: 30px;
+        }
+        .form-label {
+            display: inline-block; 
+            width: 200px; 
+            margin-right: 10px; 
+        }
+        
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .form-control {
+            flex-grow: 1; /* Ensures input fields take remaining space */
+        }
+        .btn:hover{
+            opacity: 0.8;
+        }
+        .heading{
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .footer{
+            margin-top: 15px;
+            font-size: small;
+            margin-bottom: 0%;
+        }
+        .footer a{
+            text-decoration: none;
+            color: rgb(219, 52, 52);
+            font-weight: 600;
+        }
+        .footer a:hover{
+            color: rgb(74, 138, 74);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <ul class="nav-links">
+                <li><a href="/">Home</a> </li>
+                {% if 'user_id' in session %}
+                    <li><a href="/dashboard">Dashboard</a>  </li>
+                {% else %}
+                    <li><a href="/login">Login</a> </li>
+                    <li><a href="/register">Register</a> </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- <div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+
+            {% for category, message in messages %}
+            <div class="alert alert-{{category}}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+    </div> -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="toast show align-items-center text-white bg-{{ category }} border-0" role="alert">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                {{ message }}
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+    <div class="hero">
+        <div class="main">
+            <div class="wrapper container-fluid">
+                {% block content %} {% endblock %}
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</html>

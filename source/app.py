@@ -9,7 +9,7 @@ from flask import abort
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'MYSECRETKEY'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123456@localhost:5432/flask_auth_db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123456@localhost:5432/flask_auth_db' #database connection
 
     bcrypt = Bcrypt()
 
@@ -39,10 +39,10 @@ def create_app():
         form = LoginForm()
         if form.validate_on_submit():
             user = User.query.filter_by(email=form.email.data).first()
-            if user and bcrypt.check_password_hash(user.password,form.password.data):
+            if user and bcrypt.check_password_hash(user.password,form.password.data): #password hashing
                 session['user_id'] = user.id
                 session['username'] = user.username
-                flash("You have been logged in successfully..", 'success')
+                flash("You have been logged in successfully..", 'success')            #flash messages
                 return redirect(url_for('dashboard'))
             else:
                 flash('Login unsuccessful.. Please check your credentials','danger')
@@ -61,10 +61,7 @@ def create_app():
                 email = form.email.data,
                 password = hashed_password,
             )
-            # db.session.add(user)
-            # db.session.commit()
-            # flash('Your account has been created. You can login now..', 'success')
-            # return redirect(url_for('login'))
+
             try:
                 db.session.add(user)
                 db.session.commit()

@@ -3,6 +3,8 @@ from forms import RegisterForm, LoginForm
 from models import db, User
 from flask_bcrypt import Bcrypt
 from functools import wraps
+from sqlalchemy.exc import IntegrityError
+from flask import abort
 
 def create_app():
     app = Flask(__name__)
@@ -32,7 +34,7 @@ def create_app():
     
     @app.route('/login', methods = ['GET','POST'])
     def login():
-        if 'usr_id' in session:
+        if 'user_id' in session:
             return redirect(url_for('dashboard'))
         form = LoginForm()
         if form.validate_on_submit():
@@ -49,7 +51,7 @@ def create_app():
     
     @app.route('/register', methods = ['GET','POST'])
     def register():
-        if 'usr_id' in session:
+        if 'user_id' in session:
             return redirect(url_for('dashboard'))
         form = RegisterForm()
         if form.validate_on_submit():
@@ -59,11 +61,22 @@ def create_app():
                 email = form.email.data,
                 password = hashed_password,
             )
-            db.session.add(user)
-            db.session.commit()
-            flash('Your account has been created. You can login now..', 'success')
-            return redirect(url_for('login'))
-
+            # db.session.add(user)
+            # db.session.commit()
+            # flash('Your account has been created. You can login now..', 'success')
+            # return redirect(url_for('login'))
+            try:
+                db.session.add(user)
+                db.session.commit()
+                flash('Your account has been created. You can login now.', 'success')
+                return redirect(url_for('login'))
+            except IntegrityError:
+                db.session.rollback()
+                flash('Email already exists. Please choose a different one.', 'danger')
+            except Exception as e:
+                db.session.rollback()
+                flash('An unexpected error occurred. Please try again later.', 'danger')
+                abort(500)
         return render_template("register.html",form=form)
     
     @app.route('/dashboard')
